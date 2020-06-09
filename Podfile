@@ -5,11 +5,18 @@ target 'iOS-Challenge' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  pod 'Alamofire'
+    pod 'Alamofire'
+    pod 'RxSwift', '~> 5'
+    pod 'RxCocoa', '~> 5'
+    pod 'ReachabilitySwift'
   # Pods for iOS-Challenge
 
   target 'iOS-ChallengeTests' do
     inherit! :search_paths
+
+    pod 'RxBlocking', '~> 5'
+    pod 'RxTest', '~> 5'
+
     # Pods for testing
   end
 
