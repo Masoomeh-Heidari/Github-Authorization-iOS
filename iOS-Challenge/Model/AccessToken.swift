@@ -1,5 +1,5 @@
 //
-//  AccessTokenResponse.swift
+//  AccessToken.swift
 //  iOS-Challenge
 //
 //  Created by Farshad Mousalou on 2/4/20.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct AccessTokenResponse: Decodable {
+struct AccessToken: Decodable {
     
     let accessToken: String?
     let tokenType: String?
@@ -19,5 +19,4 @@ struct AccessTokenResponse: Decodable {
         case tokenType = "token_type"
         case scope = "scope"
     }
-    
 }
