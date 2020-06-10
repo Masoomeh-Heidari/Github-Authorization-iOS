@@ -27,7 +27,7 @@ class RequestManager: RequestManagerProtocol {
     }
     
     func callAPI(requestConvertible: URLRequestConvertible, callback: @escaping requestManagerCallBackResult) {
-        session.request(requestConvertible).validate(statusCode: 200...403).responseJSON { (response) in
+        session.request(requestConvertible).validate(statusCode: 200...403).response{ (response) in
                         
             switch response.result {
                 

@@ -41,7 +41,9 @@ class AuthenticationCoordinator: BaseCoordinator<Void> {
     }
     
     private func showLogin(in viewController: UIViewController) {
-        let safariViewController = SFSafariViewController(url: URL(string: API.LOGIN_URL)!)
+        let queryString = (["client_id":API.CLIENT_ID,"redirect_uri":API.REDIRECT_URI] as [String : Any]).queryString
+        let url : URL? = URL.init(string: API.LOGIN_URL + queryString)
+        let safariViewController = SFSafariViewController(url: url!)
           viewController.present(safariViewController, animated: true)
       }
     

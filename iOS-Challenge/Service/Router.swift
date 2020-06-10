@@ -25,7 +25,7 @@ protocol Router:URLRequestConvertible {
 
 extension Router {
     var baseURLString: String? {
-        return  API.BASE_URL
+        return  API.API_URL
     }
     
     //add Rout method here

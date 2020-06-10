@@ -10,12 +10,11 @@
 
 enum API {
     
-    static let BASE_URL = "https://api.github.com"
+    static let API_URL = "https://api.github.com"
+    static let BASE_URL = "https://github.com"
     static let LOGIN_URL = "https://github.com/login/oauth/authorize"
-    static let CLIENT_ID = "04860a64b85b7438bf91"
-    static let CLIENT_SECRET = "13342aaf3eb01b5498fc16b1bad90e1ab0e64a28"
-    static let REDIRECT_URI = "challenge://app/callback"
+    static let CLIENT_ID = "d8d4c12a99a19b68805d"
+    static let CLIENT_SECRET = "4c4101b6f98ff4b6c979bd99d747717cda363adb"
+    static let REDIRECT_URI = "digipay://callback"
+    
 }
-
-
-

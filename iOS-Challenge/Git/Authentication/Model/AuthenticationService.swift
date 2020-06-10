@@ -29,12 +29,7 @@ class AuthenticationService: AuthenticationServiceProtocol {
     func authorization(with code: String, callBack: @escaping authorizationCallback) {
         requestManager.callAPI(requestConvertible: AuthenticationRouter.authorize(code)) { (result, error) in
             if let data = result as? Data{
-                do {
-                    let response = try self.decoder.decode(AccessToken.self, from: data)
-                    callBack(response.accessToken,nil)
-                } catch (let error) {
-                    callBack(nil,error)
-                }
+                callBack(String(decoding: data, as: UTF8.self), nil)
             }
         }
     }

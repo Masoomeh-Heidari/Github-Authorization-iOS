@@ -15,10 +15,14 @@ enum AuthenticationRouter  {
 
 extension AuthenticationRouter :Router {
     
+    var baseURLString: String? {
+        return  API.BASE_URL
+    }
+    
     var path: String {
         switch self {
         case .authorize:
-            return "login/oauth/authorize"
+            return "/login/oauth/access_token"
 
         }
     }
@@ -33,7 +37,7 @@ extension AuthenticationRouter :Router {
     var params: Parameters? {
           switch self {
           case .authorize(let code):
-            return ["client_id": API.CLIENT_ID,"code": code, "state": 0, "redirect_uri": API.REDIRECT_URI,"client_secret": API.CLIENT_SECRET]
+            return ["client_id": API.CLIENT_ID,"code": code,"client_secret": API.CLIENT_SECRET]
             }
      }
 }
