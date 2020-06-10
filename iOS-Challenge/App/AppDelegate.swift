@@ -37,6 +37,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        
         guard let parameters = url.absoluteURL.queryParameters else { return true}
         
+       if let sourceApp = options[.sourceApplication] as? String, sourceApp == "com.apple.SafariViewService" {
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: kCloseSafariViewControllerNotification), object: url)
+        }
+        
         appCoordinator.resumeAuthentication(with: parameters)
         
         return true
