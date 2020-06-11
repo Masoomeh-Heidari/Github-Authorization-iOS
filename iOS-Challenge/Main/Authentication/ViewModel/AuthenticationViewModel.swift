@@ -14,14 +14,14 @@ class AuthenticationViewModel:BaseViewModel {
     
     private var service : AuthenticationServiceProtocol!
     
-    let showLogin = PublishSubject<Void>()
+    let showLogin = ReplaySubject<Void>.create(bufferSize: 1)
 
     
     init(service :AuthenticationServiceProtocol = AuthenticationService()) {
         self.service = service
     }
     
-    func authenticateUser(with code: String) -> Observable<String?>{
+    func authenticateUser(with code: String) -> Observable<String>{
         return Observable.create { (observer) -> Disposable in
             self.service.authorization(with: code) { (token, error) in
                 if let _ = token {
