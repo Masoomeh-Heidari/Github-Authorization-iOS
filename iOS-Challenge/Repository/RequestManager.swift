@@ -10,7 +10,7 @@
 import Foundation
 import Alamofire
 
-typealias requestManagerCallBackResult = (Any?,Error?) -> Void
+typealias requestManagerCallBackResult = (_ response: HTTPURLResponse?,_ data: Data?,_ error: Error?) -> Void
 
 protocol RequestManagerProtocol {
     func callAPI(requestConvertible: URLRequestConvertible, callback: @escaping requestManagerCallBackResult)
@@ -27,23 +27,9 @@ class RequestManager: RequestManagerProtocol {
     }
     
     func callAPI(requestConvertible: URLRequestConvertible, callback: @escaping requestManagerCallBackResult) {
-        session.request(requestConvertible).validate(statusCode: 200...403).response{ (response) in
+        session.request(requestConvertible).validate(statusCode: 200...400).response{ (response) in
                         
-            switch response.result {
-                
-            case .success(_):
-                
-                do {
-                     let response = try response.result.get()
-                    callback(response,nil)
-
-                } catch(let error) {
-                    callback(nil,error)
-                }
-          
-            case .failure(let error):
-                callback(nil,error)
-            }
+            callback(response.response ,try? response.result.get() , response.error)
         }
     }
 }

@@ -8,7 +8,8 @@ target 'iOS-Challenge' do
     pod 'Alamofire'
     pod 'RxSwift', '~> 5'
     pod 'RxCocoa', '~> 5'
-    pod 'ReachabilitySwift'
+    pod 'Toast-Swift', '~> 5.0.1'
+
   # Pods for iOS-Challenge
 
   target 'iOS-ChallengeTests' do

@@ -7,3 +7,9 @@
 //
 
 import Foundation
+
+
+class SearchResponse<T:Decodable>: Decodable
+{
+    var items:[T]
+}

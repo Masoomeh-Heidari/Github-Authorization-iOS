@@ -27,9 +27,11 @@ class AuthenticationService: AuthenticationServiceProtocol {
     }
     
     func authorization(with code: String, callBack: @escaping authorizationCallback) {
-        requestManager.callAPI(requestConvertible: AuthenticationRouter.authorize(code)) { (result, error) in
-            if let data = result as? Data{
+        requestManager.callAPI(requestConvertible: AuthenticationRouter.authorize(code)) { (_ , result, error)  in
+            if let data = result , error == nil {
                 callBack(String(decoding: data, as: UTF8.self), nil)
+            }else {
+                callBack(nil, error)
             }
         }
     }

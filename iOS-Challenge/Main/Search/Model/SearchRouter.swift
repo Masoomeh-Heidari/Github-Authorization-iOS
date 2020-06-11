@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 
 enum SearchRouter  {
-    case searchRepo(query: String)
+    case searchRepo(query: String , page:Int? = 0)
 }
 
 extension SearchRouter :Router {
@@ -32,8 +32,8 @@ extension SearchRouter :Router {
     
     var params: Parameters? {
           switch self {
-          case .searchRepo(let query):
-            return ["q":query]
-            }
+          case .searchRepo(let query,let page):
+            return ["q":query, "page" :page].compactMapValues{$0}
+        }
      }
 }

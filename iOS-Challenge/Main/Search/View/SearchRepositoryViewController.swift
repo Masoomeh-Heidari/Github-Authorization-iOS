@@ -51,8 +51,8 @@ class SearchRepositoryViewController: TableViewController,StoryboardInitializabl
         let state = viewModel.createState(
             searchText: searchBar.rx.text.orEmpty.changed.asSignal().throttle(.milliseconds(300)),
             loadNextPageTrigger: loadNextPageTrigger,
-            performSearch: { queryString in
-                self.viewModel.searchRepository(by:queryString)
+            performSearch: { queryString , nextPage in
+                self.viewModel.searchRepository(by:queryString, nextPage: nextPage)
                     .trackActivity(self.activityIndicator)
             })
 

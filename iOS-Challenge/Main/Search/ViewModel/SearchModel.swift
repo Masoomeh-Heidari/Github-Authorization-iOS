@@ -17,7 +17,7 @@ struct SearchState {
     var shouldLoadNextPage: Bool
     var repositories: Version<[Repository]>
     var failure: SearchServiceError?
-    var nextPage: String?
+    var nextPage: Int?
 
     init(searchText: String) {
         self.searchText = searchText
@@ -32,12 +32,13 @@ enum SearchServiceError: Error {
     case offline
     case githubLimitReached
     case networkError
+    case unkownError
 }
 
 struct SearchQuery: Equatable {
     let searchText: String;
     let shouldLoadNextPage: Bool;
-    let nextPage: String?
+    let nextPage: Int?
 }
 
 enum SearchCommand {

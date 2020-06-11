@@ -7,19 +7,15 @@
 //
 
 
-#if os(iOS)
-    import UIKit
-    typealias Image = UIImage
-#elseif os(macOS)
-    import Cocoa
-    import AppKit
-    typealias Image = NSImage
-#endif
+import UIKit
+import Toast_Swift
+
+typealias Image = UIImage
 
 let MB = 1024 * 1024
 
-func exampleError(_ error: String, location: String = "\(#file):\(#line)") -> NSError {
-    return NSError(domain: "ExampleError", code: -1, userInfo: [NSLocalizedDescriptionKey: "\(location): \(error)"])
+func createError(_ error: String, location: String = "\(#file):\(#line)") -> NSError {
+    return NSError(domain: "challengeError", code: -1, userInfo: [NSLocalizedDescriptionKey: "\(location): \(error)"])
 }
 
 extension String {
@@ -34,12 +30,17 @@ extension String {
     }
 }
 
-func showAlert(_ message: String) {
-    #if os(iOS)
-        UIAlertView(title: "RxExample", message: message, delegate: nil, cancelButtonTitle: "OK").show()
-    #elseif os(macOS)
-        let alert = NSAlert()
-        alert.messageText = message
-        alert.runModal()
-    #endif
+class Banner {
+    
+    static var style = ToastStyle()
+    
+    static func show(message: String, view:UIView){
+        style.messageColor = UIColor(red: 1.0, green: 0.6, blue: 0.6, alpha: 1.0)
+        view.makeToast(message, duration: 3.0, position: .top, style: style)
+    }
+    
+    static func dismiss(view: UIView){
+        view.hideAllToasts()
+    }
+    
 }

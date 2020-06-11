@@ -44,16 +44,38 @@ class AppCoordinator: BaseCoordinator<Void> {
      func resumeAuthentication(with parameters: QueryParameters) {
         if let code =  parameters["code"]{
             viewModel.authenticateUser(with: code).subscribe(onNext: { (token) in
-                KeychainManager.saveToken(data: token!)
                 
-                let searchRepoCoordinator = SearchRepoCoordinator()
-                self.coordinate(to: searchRepoCoordinator).subscribe().disposed(by: self.disposeBag)
+                self.saveTokenToKeychain(token: token)
+                self.coordinateToSearchRepository()
+                
             }, onError: { (error) in
                 print(error)
                 
             }).disposed(by: disposeBag)
         }
      }
+    
+    func saveTokenToKeychain(token :String)  {
+        if let savedToken = KeychainManager.loadToken(), savedToken != token {
+            KeychainManager.updateToken(data: token)
+        }else {
+            KeychainManager.saveToken(data: token)
+        }
+    }
+    
+    func coordinateToSearchRepository(){
+        let viewModel = SearchRepositoryViewModel()
+        let viewController = SearchRepositoryViewController()
+        viewController.viewModel = viewModel
+        
+        let navigationController = UINavigationController(rootViewController: viewController)
+        
+        let searchRepoCoordinator = SearchRepositoryCoordinator(viewController: viewController, viewModel: viewModel)
+        self.coordinate(to: searchRepoCoordinator).subscribe().disposed(by: self.disposeBag)
+        
+        window.rootViewController = navigationController
+    }
+    
 }
 
 

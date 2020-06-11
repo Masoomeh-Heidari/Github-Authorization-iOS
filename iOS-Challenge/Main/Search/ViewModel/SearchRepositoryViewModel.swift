@@ -13,7 +13,7 @@ import RxSwift
 import RxCocoa
 
 
-typealias SearchRepositoriesResponse = Result<(repositories: [Repository], nextPage: String?), SearchServiceError>
+typealias SearchRepositoriesResponse = Result<(repositories: [Repository], nextPage: Int?), SearchServiceError>
 
 class SearchRepositoryViewModel: BaseViewModel {
     
@@ -27,13 +27,13 @@ class SearchRepositoryViewModel: BaseViewModel {
         self._reachabilityService = reachabilityService
     }
     
-    func searchRepository(by query: String) -> Observable<SearchRepositoriesResponse>{
+    func searchRepository(by query: String, nextPage:Int ) -> Observable<SearchRepositoriesResponse>{
         return Observable.create { (observer) -> Disposable in
-            self.service.search(by: query) { (repositories, nextPage, error) in
+            self.service.search(by: query, page: nextPage) { (repositories, nextPage, error) in
                 if error == .githubLimitReached {
-                    return .failure(.githubLimitReached)
+//                    return .failure(.githubLimitReached)
                 }else {
-                    return .success((repositories: repositories, nextPage: nextPage))
+//                    return .success((repositories: repositories, nextPage: nextPage))
                 }
             }
             return Disposables.create()
@@ -44,7 +44,7 @@ class SearchRepositoryViewModel: BaseViewModel {
     func createState(
             searchText: Signal<String>,
             loadNextPageTrigger: @escaping (Driver<SearchState>) -> Signal<()>,
-            performSearch: @escaping (String) -> Observable<SearchRepositoriesResponse>
+            performSearch: @escaping (String, Int) -> Observable<SearchRepositoriesResponse>
         ) -> Driver<SearchState> {
 
         let searchPerformerFeedback: (Driver<SearchState>) -> Signal<SearchCommand> = react(
@@ -64,7 +64,7 @@ class SearchRepositoryViewModel: BaseViewModel {
                         return Signal.empty()
                     }
 
-                    return performSearch(nextPage)
+                    return performSearch(query.searchText, nextPage)
                         .asSignal(onErrorJustReturn: .failure(SearchServiceError.networkError))
                         .map(SearchCommand.gitHubResponseReceived)
                 }
