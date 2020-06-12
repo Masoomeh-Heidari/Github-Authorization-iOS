@@ -9,7 +9,7 @@
 import Foundation
 
 
-typealias searchRepositoryCallback = (( _ repositories: [Repository]?,_  nextPage: String?,
+typealias searchRepositoryCallback = (( _ repositories: [Repository]?,_  nextPage: Int?,
                                                                         _ error: SearchServiceError?) -> Void)
 
 protocol SearchServiceProtocol {
@@ -27,8 +27,8 @@ class SearchService:SearchServiceProtocol {
     }
     
     func search(by text:String, page: Int, callback:@escaping searchRepositoryCallback){
-        requestManager.callAPI(requestConvertible: SearchRouter.searchRepo(query: text, page: page)) { (response, data, error) in
-            var nextPage: String?
+        requestManager.callAPI(requestConvertible: SearchRouter.searchRepo(query: text, page: page.stringValue())) { (response, data, error) in
+            var nextPage: Int?
             var serviceError: SearchServiceError?
             var repositories: [Repository]?
             
@@ -109,10 +109,10 @@ extension SearchService {
         return nextUrl
     }
     
-    private static func getNextPageFrom(url : URL) -> String? {
+    private static func getNextPageFrom(url : URL) -> Int? {
         guard let params = url.absoluteURL.queryParameters, let page = params["page"] else{
             return nil
         }
-        return page
+        return page.intValue()
     }
 }

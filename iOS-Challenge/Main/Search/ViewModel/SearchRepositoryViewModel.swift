@@ -28,57 +28,58 @@ class SearchRepositoryViewModel: BaseViewModel {
     }
     
     func searchRepository(by query: String, nextPage:Int ) -> Observable<SearchRepositoriesResponse>{
-        return Observable.create { (observer) -> Disposable in
+        Observable.create { (observer) -> Disposable in
             self.service.search(by: query, page: nextPage) { (repositories, nextPage, error) in
-                if error == .githubLimitReached {
-//                    return .failure(.githubLimitReached)
-                }else {
-//                    return .success((repositories: repositories, nextPage: nextPage))
+                if error != nil {
+                    observer.onError(error!)
+                }else  {
+                    observer.onNext(.success((repositories: repositories ?? [], nextPage: nextPage)))
+                    observer.onCompleted()
                 }
             }
             return Disposables.create()
-        }
+        }.debug()
     }
     
 
     func createState(
-            searchText: Signal<String>,
-            loadNextPageTrigger: @escaping (Driver<SearchState>) -> Signal<()>,
-            performSearch: @escaping (String, Int) -> Observable<SearchRepositoriesResponse>
-        ) -> Driver<SearchState> {
-
+        searchText: Signal<String>,
+        loadNextPageTrigger: @escaping (Driver<SearchState>) -> Signal<()>,
+        performSearch: @escaping (String, Int) -> Observable<SearchRepositoriesResponse>
+    ) -> Driver<SearchState> {
+        
         let searchPerformerFeedback: (Driver<SearchState>) -> Signal<SearchCommand> = react(
             query: { (state) in
                 SearchQuery(searchText: state.searchText, shouldLoadNextPage: state.shouldLoadNextPage, nextPage: state.nextPage)
             },
             effects: { query -> Signal<SearchCommand> in
-                    if !query.shouldLoadNextPage {
-                        return Signal.empty()
-                    }
-
-                    if query.searchText.isEmpty {
-                        return Signal.just(SearchCommand.gitHubResponseReceived(.success((repositories: [], nextPage: nil))))
-                    }
-
-                    guard let nextPage = query.nextPage else {
-                        return Signal.empty()
-                    }
-
-                    return performSearch(query.searchText, nextPage)
-                        .asSignal(onErrorJustReturn: .failure(SearchServiceError.networkError))
-                        .map(SearchCommand.gitHubResponseReceived)
+                if !query.shouldLoadNextPage {
+                    return Signal.empty().debug()
                 }
+                
+                if query.searchText.isEmpty {
+                    return Signal.just(SearchCommand.gitHubResponseReceived(.success((repositories: [], nextPage: nil)))).debug()
+                }
+                
+                guard let nextPage = query.nextPage else {
+                    return Signal.empty()
+                }
+                
+                return performSearch(query.searchText, nextPage)
+                    .asSignal(onErrorJustReturn: .failure(SearchServiceError.networkError)).debug()
+                    .map(SearchCommand.gitHubResponseReceived).debug()
+        }
         )
 
         // this is degenerated feedback loop that doesn't depend on output state
         
         let inputFeedbackLoop: (Driver<SearchState>) -> Signal<SearchCommand> = { state in
-                
-                let loadNextPage = loadNextPageTrigger(state).map { _ in SearchCommand.loadMoreItems }
-                
-                let searchText = searchText.map(SearchCommand.changeSearch)
-
-                return Signal.merge(loadNextPage, searchText)
+            
+            let loadNextPage = loadNextPageTrigger(state).map { _ in SearchCommand.loadMoreItems }.debug()
+            
+            let searchText = searchText.map(SearchCommand.changeSearch).debug()
+            
+            return Signal.merge(loadNextPage, searchText)
         }
 
         // Create a system with two feedback loops that drive the system

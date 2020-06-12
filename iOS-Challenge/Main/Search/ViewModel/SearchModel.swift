@@ -24,7 +24,7 @@ struct SearchState {
         shouldLoadNextPage = true
         repositories = Version([])
         failure = nil
-        nextPage = nil
+        nextPage = 0
     }
 }
 
@@ -36,8 +36,8 @@ enum SearchServiceError: Error {
 }
 
 struct SearchQuery: Equatable {
-    let searchText: String;
-    let shouldLoadNextPage: Bool;
+    let searchText: String
+    let shouldLoadNextPage: Bool
     let nextPage: Int?
 }
 
@@ -108,4 +108,10 @@ extension SearchState {
             return false
         }
     }
+}
+
+struct SearchRepositoryResult {
+    let repositories:[Repository]?
+    let nextPage :Int?
+    
 }
