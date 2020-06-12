@@ -43,8 +43,6 @@
 		55C2B1A62492578300FF93A0 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C2B1A52492578300FF93A0 /* Utility.swift */; };
 		55C2B1A8249257DA00FF93A0 /* SectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C2B1A7249257DA00FF93A0 /* SectionModel.swift */; };
 		55C2B1AA2492591600FF93A0 /* TableViewSectionedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C2B1A92492591600FF93A0 /* TableViewSectionedDataSource.swift */; };
-		55C2B1AC24925CCD00FF93A0 /* Feedbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C2B1AB24925CCD00FF93A0 /* Feedbacks.swift */; };
-		55C2B1AE24925D6200FF93A0 /* Observable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C2B1AD24925D6200FF93A0 /* Observable+Extensions.swift */; };
 		55C2B1B124925FFA00FF93A0 /* SearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C2B1B024925FFA00FF93A0 /* SearchModel.swift */; };
 		55C2B1B32492613300FF93A0 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C2B1B22492613300FF93A0 /* Reachability.swift */; };
 		55C2B1B52492617E00FF93A0 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C2B1B42492617E00FF93A0 /* Array+Extensions.swift */; };
@@ -118,8 +116,6 @@
 		55C2B1A52492578300FF93A0 /* Utility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		55C2B1A7249257DA00FF93A0 /* SectionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionModel.swift; sourceTree = "<group>"; };
 		55C2B1A92492591600FF93A0 /* TableViewSectionedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewSectionedDataSource.swift; sourceTree = "<group>"; };
-		55C2B1AB24925CCD00FF93A0 /* Feedbacks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feedbacks.swift; sourceTree = "<group>"; };
-		55C2B1AD24925D6200FF93A0 /* Observable+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Observable+Extensions.swift"; sourceTree = "<group>"; };
 		55C2B1B024925FFA00FF93A0 /* SearchModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchModel.swift; sourceTree = "<group>"; };
 		55C2B1B22492613300FF93A0 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		55C2B1B42492617E00FF93A0 /* Array+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
@@ -327,7 +323,6 @@
 			children = (
 				55502CBD2492A33C009BBFF4 /* UINavigationController+Extensions.swift */,
 				55C2B1B42492617E00FF93A0 /* Array+Extensions.swift */,
-				55C2B1AD24925D6200FF93A0 /* Observable+Extensions.swift */,
 				55AC5CCF24900A3100CBBDF1 /* URL+Extension.swift */,
 				55ED52DE24912B5A00CECF0B /* Dictionary+Extension.swift */,
 				553F39DB2492D03600D09A46 /* String+Extension.swift */,
@@ -343,7 +338,6 @@
 				55C2B1A12492571200FF93A0 /* SectionModelType.swift */,
 				55C2B1A92492591600FF93A0 /* TableViewSectionedDataSource.swift */,
 				55C2B1A7249257DA00FF93A0 /* SectionModel.swift */,
-				55C2B1AB24925CCD00FF93A0 /* Feedbacks.swift */,
 				55C2B1A32492575800FF93A0 /* ActivityIndicator.swift */,
 				55C2B1A52492578300FF93A0 /* Utility.swift */,
 				550E81D424922AEB00E7C828 /* ReachabilityService.swift */,
@@ -708,7 +702,6 @@
 			files = (
 				55ED52DF24912B5A00CECF0B /* Dictionary+Extension.swift in Sources */,
 				55AC5CEE24900A3100CBBDF1 /* Router.swift in Sources */,
-				55C2B1AC24925CCD00FF93A0 /* Feedbacks.swift in Sources */,
 				55D37DA62491A2FD00A8D2A9 /* SearchRepositoryTableViewCell.swift in Sources */,
 				55AC5CE224900A3100CBBDF1 /* AuthenticationViewModel.swift in Sources */,
 				55C2B1BB249277AB00FF93A0 /* Lenses.swift in Sources */,
@@ -721,7 +714,6 @@
 				55AC5CD624900A3100CBBDF1 /* KeychainManager.swift in Sources */,
 				55C2B1A8249257DA00FF93A0 /* SectionModel.swift in Sources */,
 				55502CBE2492A33C009BBFF4 /* UINavigationController+Extensions.swift in Sources */,
-				55C2B1AE24925D6200FF93A0 /* Observable+Extensions.swift in Sources */,
 				55AC5CE124900A3100CBBDF1 /* SearchRepositoryViewController.swift in Sources */,
 				55C2B1B32492613300FF93A0 /* Reachability.swift in Sources */,
 				55C2B1B92492778B00FF93A0 /* Version.swift in Sources */,

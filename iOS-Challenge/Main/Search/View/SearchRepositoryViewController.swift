@@ -24,7 +24,7 @@ class SearchRepositoryViewController: ViewController,StoryboardInitializable {
     let activityIndicator = ActivityIndicator()
     
     var viewModel: SearchRepositoryViewModel!
-        
+    
     let dataSource = RxTableViewSectionedReloadDataSource<SectionModel<String, Repository>>(
         configureCell: { (_, tv, ip, repository: Repository) in
             var cell = tv.dequeueReusableCell(withIdentifier: reuseIdentifier)!
@@ -54,26 +54,31 @@ class SearchRepositoryViewController: ViewController,StoryboardInitializable {
                         : Signal.empty()
             }
         }
-                
+        
         let state = viewModel.createState(
-            searchText: searchBar.rx.text.orEmpty.changed.asSignal().throttle(.milliseconds(300)),
-            loadNextPageTrigger: loadNextPageTrigger,
-            performSearch: { queryString , nextPage in
-                self.viewModel.searchRepository(by:queryString, nextPage: nextPage)
-                    .trackActivity(self.activityIndicator)
-            }).debug()
-
+            searchText: searchBar.rx.text.orEmpty
+                        .changed
+                            .asSignal()
+                                .throttle(.milliseconds(300))
+                                    .skip(2),
+                                        loadNextPageTrigger: loadNextPageTrigger,
+                                        performSearch: { queryString , nextPage in
+                                            self.viewModel.searchRepository(by:queryString, nextPage: nextPage)
+                                                .trackActivity(self.activityIndicator)
+                                    }).debug()
+        
         state
             .map { $0.isOffline }
-        .debug()
+            .debug()
             .drive(self.rx.isOffline)
             .disposed(by: disposeBag)
         
         state
             .map { $0.repositories }
-        .debug()
+            .debug("***********Repository maps", trimOutput: false)
             .distinctUntilChanged()
             .map { [SectionModel(model: "Repositories", items: $0.value)] }
+            .debug("***distic repos***", trimOutput: false)
             .drive(tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
         
@@ -85,7 +90,7 @@ class SearchRepositoryViewController: ViewController,StoryboardInitializable {
         
         state
             .map { $0.isLimitExceeded }
-        .debug()
+            .debug()
             .distinctUntilChanged()
             .filter { $0 }
             .drive(onNext: { n in
@@ -98,7 +103,7 @@ class SearchRepositoryViewController: ViewController,StoryboardInitializable {
                 if self.searchBar.isFirstResponder {
                     _ = self.searchBar.resignFirstResponder()
                 }
-            }
+        }
         .disposed(by: disposeBag)
         
         // so normal delegate customization can also be used

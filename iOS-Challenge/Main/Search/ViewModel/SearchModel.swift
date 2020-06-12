@@ -113,5 +113,5 @@ extension SearchState {
 struct SearchRepositoryResult {
     let repositories:[Repository]?
     let nextPage :Int?
-    
+    let error:SearchServiceError?
 }
