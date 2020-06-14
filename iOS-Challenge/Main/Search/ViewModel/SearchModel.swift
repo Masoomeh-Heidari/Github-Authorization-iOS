@@ -12,19 +12,30 @@ import RxSwift
 
 
 struct SearchState {
-    // control
-    var searchText: String
-    var shouldLoadNextPage: Bool
-    var repositories: Version<[Repository]>
-    var failure: SearchServiceError?
-    var nextPage: Int?
+    var search: String {
+         didSet {
+             if search.isEmpty {
+                 self.nextPage = nil
+                 self.shouldLoadNextPage = false
+                 self.results = []
+                 self.lastError = nil
+                 return
+             }
+             self.nextPage = 0
+             self.shouldLoadNextPage = true
+             self.lastError = nil
+         }
+     }
+     
+     var nextPage: Int?
+     var shouldLoadNextPage: Bool
+     var results: [Repository]
+     var lastError: SearchServiceError?
+}
 
-    init(searchText: String) {
-        self.searchText = searchText
-        shouldLoadNextPage = true
-        repositories = Version([])
-        failure = nil
-        nextPage = 0
+extension SearchState {
+    var loadNextPage: SearchQuery? {
+        return self.shouldLoadNextPage ? SearchQuery(searchText: search , nextPage: self.nextPage) : nil
     }
 }
 
@@ -35,80 +46,64 @@ enum SearchServiceError: Error {
     case unkownError
 }
 
+
+extension SearchServiceError {
+    var displayMessage: String {
+        switch self {
+        case .offline:
+            return "Ups, no network connectivity"
+        case .githubLimitReached:
+            return "Reached GitHub throttle limit, wait 60 sec"
+        default:
+            return "Service Error ..."
+        }
+    }
+}
+
 struct SearchQuery: Equatable {
     let searchText: String
-    let shouldLoadNextPage: Bool
     let nextPage: Int?
 }
 
-enum SearchCommand {
-    case changeSearch(text: String)
-    case loadMoreItems
-    case gitHubResponseReceived(SearchRepositoriesResponse)
+enum SearchEvent {
+    case searchChanged(String)
+    case response(SearchRepositoriesResponse)
+    case scrollingNearBottom
 }
 
 
 extension SearchState {
-    static let initial = SearchState(searchText: "")
+    static var empty: SearchState {
+           return SearchState(search: "", nextPage: nil, shouldLoadNextPage: true, results: [], lastError: nil)
+       }
 
-    static func reduce(state: SearchState, command: SearchCommand) -> SearchState {
-        switch command {
-        case .changeSearch(let text):
-            return SearchState(searchText: text).mutateOne { $0.failure = state.failure }
-        case .gitHubResponseReceived(let result):
-            switch result {
-            case let .success((repositories, nextPage)):
-                return state.mutate {
-                    $0.repositories = Version($0.repositories.value + repositories)
-                    $0.shouldLoadNextPage = false
-                    $0.nextPage = nextPage
-                    $0.failure = nil
-                }
-            case let .failure(error):
-                return state.mutateOne { $0.failure = error }
-            }
-        case .loadMoreItems:
-            return state.mutate {
-                if $0.failure == nil {
-                    $0.shouldLoadNextPage = true
-                }
-            }
-        }
-    }
+       static func reduce(state: SearchState, event: SearchEvent) -> SearchState {
+           switch event {
+           case .searchChanged(let search):
+               var result = state
+               result.search = search
+               result.results = []
+               return result
+           case .scrollingNearBottom:
+               var result = state
+               result.shouldLoadNextPage = true
+               return result
+           case .response(.success(let response)):
+               var result = state
+               result.results += response.repositories
+               result.shouldLoadNextPage = false
+               result.nextPage = response.nextPage
+               result.lastError = nil
+               return result
+           case .response(.failure(let error)):
+               var result = state
+               result.shouldLoadNextPage = false
+               result.lastError = error
+               return result
+           }
+       }
 }
 
-
-extension SearchState: Mutable {
-
-}
-
-extension SearchState {
-    var isOffline: Bool {
-        guard let failure = self.failure else {
-            return false
-        }
-
-        if case .offline = failure {
-            return true
-        }
-        else {
-            return false
-        }
-    }
-
-    var isLimitExceeded: Bool {
-        guard let failure = self.failure else {
-            return false
-        }
-
-        if case .githubLimitReached = failure {
-            return true
-        }
-        else {
-            return false
-        }
-    }
-}
 
 struct SearchRepositoryResult {
     let repositories:[Repository]?

@@ -22,11 +22,14 @@ class SearchService:SearchServiceProtocol {
     let requestManager:RequestManagerProtocol
     let decoder = JSONDecoder()
     
+    private let linksRegex = try! NSRegularExpression(pattern: "\\s*,?\\s*<([^\\>]*)>\\s*;\\s*rel=\"([^\"]*)\"", options: [.allowCommentsAndWhitespace])
+    
+    
     init(requestManager: RequestManagerProtocol = RequestManager()) {
         self.requestManager = requestManager
     }
     
-    func search(by text:String, page: Int, callback:@escaping searchRepositoryCallback){
+    func search(by text:String, page: Int = 0, callback:@escaping searchRepositoryCallback){
         requestManager.callAPI(requestConvertible: SearchRouter.searchRepo(query: text, page: page.stringValue())) { (response, data, error) in
             var nextPage: Int?
             var serviceError: SearchServiceError?
@@ -34,8 +37,8 @@ class SearchService:SearchServiceProtocol {
             
             if let res = response {
                 do {
-                    if let link = try SearchService.parseNextURL(res) {
-                        nextPage = SearchService.getNextPageFrom(url: link)
+                    if let link = try self.parseNextURL(res) {
+                        nextPage = self.getNextPageFrom(url: link)
                     }
                 } catch  {
                     serviceError = .unkownError
@@ -63,13 +66,11 @@ class SearchService:SearchServiceProtocol {
 }
 
 extension SearchService {
-    private static let parseLinksPattern = "\\s*,?\\s*<([^\\>]*)>\\s*;\\s*rel=\"([^\"]*)\""
-    private static let linksRegex = try! NSRegularExpression(pattern: parseLinksPattern, options: [.allowCommentsAndWhitespace])
 
-    private static func parseLinks(_ links: String) throws -> [String: String] {
+    private func parseLinks(_ links: String) throws -> [String: String] {
 
         let length = (links as NSString).length
-        let matches = SearchService.linksRegex.matches(in: links, options: NSRegularExpression.MatchingOptions(), range: NSRange(location: 0, length: length))
+        let matches = self.linksRegex.matches(in: links, options: NSRegularExpression.MatchingOptions(), range: NSRange(location: 0, length: length))
 
         var result: [String: String] = [:]
 
@@ -91,12 +92,12 @@ extension SearchService {
         return result
     }
 
-    private static func parseNextURL(_ httpResponse: HTTPURLResponse) throws -> URL? {
+    private  func parseNextURL(_ httpResponse: HTTPURLResponse) throws -> URL? {
         guard let serializedLinks = httpResponse.allHeaderFields["Link"] as? String else {
             return nil
         }
 
-        let links = try SearchService.parseLinks(serializedLinks)
+        let links = try self.parseLinks(serializedLinks)
 
         guard let nextPageURL = links["next"] else {
             return nil
@@ -109,7 +110,7 @@ extension SearchService {
         return nextUrl
     }
     
-    private static func getNextPageFrom(url : URL) -> Int? {
+    private func getNextPageFrom(url : URL) -> Int? {
         guard let params = url.absoluteURL.queryParameters, let page = params["page"] else{
             return nil
         }
